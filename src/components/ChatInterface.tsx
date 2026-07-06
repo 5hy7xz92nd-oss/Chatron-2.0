@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message } from '../types';
+import { Message, SendMessageOptions } from '../types';
 import { Send, Code, Mic } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
@@ -16,6 +16,11 @@ interface ChatInterfaceProps {
 export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
   const [input, setInput] = React.useState('');
   const [isCodeMode, setIsCodeMode] = React.useState(false);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const detectCodeLanguage = (content: string) => {
     const match = content.match(/^```([a-zA-Z0-9_-]+)?\s*/);
@@ -24,16 +29,8 @@ export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const trimmedInput = input.trim();
-
-    if (trimmedInput) {
-      const isCodeMessage = isCodeMode || trimmedInput.startsWith('```');
-      const codeLanguage = isCodeMessage ? detectCodeLanguage(trimmedInput) : undefined;
-
-      onSendMessage(trimmedInput, {
-        isCode: isCodeMessage,
-        codeLanguage,
-      });
+    if (input.trim()) {
+      onSendMessage(input.trim(), isCodeMode ? { isCode: true, codeLanguage: 'text' } : undefined);
       setInput('');
     }
   };
@@ -70,6 +67,7 @@ export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="border-t border-white/10 p-4">
         <div className="flex items-center gap-2">
@@ -94,9 +92,9 @@ export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className={`flex-1 rounded-lg px-4 py-2 text-white placeholder-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
-              isCodeMode ? 'bg-gray-900' : 'bg-white/5'
+              isCodeMode ? 'bg-gray-900 font-mono' : 'bg-white/5'
             }`}
-            placeholder={isCodeMode ? "Enter code..." : "Type your message..."}
+            placeholder={isCodeMode ? 'Enter code...' : 'Type your message...'}
           />
           <button
             type="submit"

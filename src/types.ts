@@ -8,6 +8,11 @@ export interface Message {
   confidence?: number;
 }
 
+export interface SendMessageOptions {
+  isCode?: boolean;
+  codeLanguage?: string;
+}
+
 export interface EmotionalState {
   primary: 'neutral' | 'happy' | 'thoughtful' | 'processing';
   intensity: number;
