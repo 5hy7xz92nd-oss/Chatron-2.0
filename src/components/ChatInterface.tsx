@@ -3,6 +3,11 @@ import { Message, SendMessageOptions } from '../types';
 import { Send, Code, Mic } from 'lucide-react';
 import { CodeBlock } from './CodeBlock';
 
+interface SendMessageOptions {
+  isCode?: boolean;
+  codeLanguage?: string;
+}
+
 interface ChatInterfaceProps {
   messages: Message[];
   onSendMessage: (content: string, options?: SendMessageOptions) => void;
@@ -16,6 +21,11 @@ export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
   React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  const detectCodeLanguage = (content: string) => {
+    const match = content.match(/^```([a-zA-Z0-9_-]+)?\s*/);
+    return match?.[1] || 'text';
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +74,10 @@ export function ChatInterface({ messages, onSendMessage }: ChatInterfaceProps) {
           <button
             type="button"
             onClick={() => setIsCodeMode(!isCodeMode)}
-            className="rounded-lg bg-gray-700 p-2 text-white hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-pressed={isCodeMode}
+            className={`rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+              isCodeMode ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-gray-700 hover:bg-gray-600'
+            }`}
           >
             <Code className="h-5 w-5" />
           </button>

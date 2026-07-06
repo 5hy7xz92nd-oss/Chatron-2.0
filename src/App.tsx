@@ -6,6 +6,11 @@ import { SystemMetrics } from './components/SystemMetrics';
 import { ThoughtStream } from './components/ThoughtStream';
 import { Message, EmotionalState, SystemStatus, ThoughtProcess, SendMessageOptions } from './types';
 
+interface SendMessageOptions {
+  isCode?: boolean;
+  codeLanguage?: string;
+}
+
 function App() {
   const [messages, setMessages] = useState<Message[]>([
     {
