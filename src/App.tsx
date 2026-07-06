@@ -4,7 +4,7 @@ import { OrbVisualizer } from './components/OrbVisualizer';
 import { ChatInterface } from './components/ChatInterface';
 import { SystemMetrics } from './components/SystemMetrics';
 import { ThoughtStream } from './components/ThoughtStream';
-import { Message, EmotionalState, SystemStatus, ThoughtProcess } from './types';
+import { Message, EmotionalState, SystemStatus, ThoughtProcess, SendMessageOptions } from './types';
 
 function App() {
   const [messages, setMessages] = useState<Message[]>([
@@ -67,12 +67,14 @@ function App() {
     }, 5000);
   };
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (content: string, options?: SendMessageOptions) => {
     const newMessage: Message = {
       id: Date.now().toString(),
       content,
       sender: 'user',
       timestamp: Date.now(),
+      isCode: options?.isCode,
+      codeLanguage: options?.codeLanguage,
     };
 
     setMessages(prev => [...prev, newMessage]);
